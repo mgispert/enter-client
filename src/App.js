@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Spinner } from "@chakra-ui/react";
+
+import PhonesList from "./components/PhonesList";
 
 function App() {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(`${process.env.REACT_APP_URL}/telephone`)
+      .then((result) => {
+        setLoading(false);
+        setList(result.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <section className="landingPage">
+      <h1 className="mainTitle">
+        This is your <a href={<PhonesList />}>Phoneallery!</a>
+      </h1>
+      {loading === true ? (
+        <Spinner
+          thickness="50px"
+          speed="0.65s"
+          emptyColor="black"
+          color=" rgb(123 189 254);"
+          size="xl"
+        />
+      ) : (
+        <PhonesList list={list} />
+      )}
+    </section>
   );
 }
 
